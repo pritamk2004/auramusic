@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io' show File;
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import '../models/song.dart';
 import 'music_service.dart';
 import 'storage_service.dart';
@@ -158,7 +157,7 @@ class AudioPlayerService {
         await _player.setUrl(
           streamUrl,
           headers: const {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 13; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
             'Accept': '*/*',
           },
         );

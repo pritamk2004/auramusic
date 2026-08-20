@@ -32,22 +32,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.ryanheise.just_audio_background.JustAudioBackgroundService"
-            android:icon="@mipmap/ic_launcher"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService" />
-            </intent-filter>
-        </service>
-
-        <receiver android:name="com.ryanheise.just_audio_background.MediaButtonReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
-
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

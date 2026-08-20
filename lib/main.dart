@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:just_audio_background/just_audio_background.dart';
+import 'package:flutter/foundation.dart';
 
 import 'theme/app_theme.dart';
 import 'services/storage_service.dart';
@@ -12,25 +12,8 @@ import 'providers/library_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/main_shell.dart';
 
-import 'package:flutter/foundation.dart';
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Android MediaSession Background Audio Service (mobile only)
-  if (!kIsWeb) {
-    try {
-      await JustAudioBackground.init(
-        androidNotificationChannelId: 'com.auramusic.app.channel.audio',
-        androidNotificationChannelName: 'AuraMusic Audio Playback',
-        androidNotificationOngoing: true,
-        androidStopForegroundOnPause: true,
-        androidNotificationIcon: 'mipmap/ic_launcher',
-      );
-    } catch (e) {
-      debugPrint('JustAudioBackground init warning: $e');
-    }
-  }
 
   // Initialize Local Database & Storage
   try {
