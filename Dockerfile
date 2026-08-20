@@ -15,7 +15,7 @@ WORKDIR /app
 COPY --from=build /app/build/web ./build/web
 COPY backend/server.py ./backend/server.py
 
-EXPOSE 8080
+EXPOSE 8080 10000
 ENV PORT=8080
 
-CMD ["python", "backend/server.py", "8080"]
+CMD ["python", "backend/server.py"]

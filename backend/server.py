@@ -284,9 +284,11 @@ class AuraMusicHandler(http.server.SimpleHTTPRequestHandler):
 def run_server(port=8080):
     print(f"[AuraMusic] Starting Real-Time Full-Stack Server on port {port}...")
     print(f"[AuraMusic] Serving Web UI from: {WEB_DIR}")
-    server = socketserver.TCPServer(("", port), AuraMusicHandler)
-    server.serve_forever()
+    socketserver.TCPServer.allow_reuse_address = True
+    with socketserver.TCPServer(("0.0.0.0", port), AuraMusicHandler) as server:
+        server.serve_forever()
 
 if __name__ == "__main__":
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
+    port_env = os.environ.get("PORT")
+    port = int(port_env) if port_env else (int(sys.argv[1]) if len(sys.argv) > 1 else 8080)
     run_server(port)
