@@ -37,7 +37,7 @@ class AppTheme {
         elevation: 0,
       ),
       cardColor: const Color(0xFF121212),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: const Color(0xFF181818),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
@@ -74,7 +74,7 @@ class AppTheme {
         elevation: 0,
       ),
       cardColor: const Color(0xFF151D2A),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: const Color(0xFF1A2332),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),

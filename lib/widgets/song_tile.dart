@@ -224,7 +224,7 @@ class SongTile extends StatelessWidget {
                     player.addToQueue(song);
                     Navigator.pop(ctx);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Added to Queue')),
+                      const SnackBar(content: Text('Added to Queue')),
                     );
                   },
                 ),

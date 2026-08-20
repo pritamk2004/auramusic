@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import '../providers/player_provider.dart';
 import '../providers/library_provider.dart';
-import '../providers/settings_provider.dart';
 import '../services/audio_handler.dart';
 import '../screens/player/now_playing_screen.dart';
 
@@ -268,9 +267,9 @@ class _DesktopPlayerBarState extends State<DesktopPlayerBar> {
                 SizedBox(
                   width: 80,
                   child: SliderTheme(
-                    data: SliderThemeData(
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
+                    data: const SliderThemeData(
+                      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5),
+                      overlayShape: RoundSliderOverlayShape(overlayRadius: 10),
                       trackHeight: 3,
                       activeTrackColor: Colors.white,
                       inactiveTrackColor: Colors.white24,

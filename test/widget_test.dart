@@ -5,11 +5,11 @@ import 'package:auramusic/models/lyrics.dart';
 void main() {
   group('AuraMusic Unit Tests', () {
     test('Song model serialization and formatting', () {
-      final song = Song(
+      const song = Song(
         id: 'test_1',
         title: 'Starboy',
         artist: 'The Weeknd',
-        duration: const Duration(minutes: 3, seconds: 50),
+        duration: Duration(minutes: 3, seconds: 50),
         artworkUrl: 'https://example.com/art.jpg',
       );
 

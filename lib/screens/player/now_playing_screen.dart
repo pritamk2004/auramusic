@@ -516,10 +516,10 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: const Icon(Icons.equalizer, color: Color(0xFF1DB954)),
-                title: const Text('Audio Quality: High 320/160kbps'),
-                subtitle: const Text('Direct lossless stream with zero compression'),
+              const ListTile(
+                leading: Icon(Icons.equalizer, color: Color(0xFF1DB954)),
+                title: Text('Audio Quality: High 320/160kbps'),
+                subtitle: Text('Direct lossless stream with zero compression'),
               ),
               ListTile(
                 leading: const Icon(Icons.share, color: Colors.white),

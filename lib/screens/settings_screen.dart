@@ -92,15 +92,15 @@ class SettingsScreen extends StatelessWidget {
 
           // About App
           _buildSectionHeader('ABOUT AURAMUSIC'),
-          ListTile(
-            leading: const Icon(Icons.verified_user, color: Color(0xFF1DB954)),
-            title: const Text('100% Free & Ad-Free Guarantee'),
-            subtitle: const Text('Unlimited streaming, no subscriptions, zero audio ads'),
+          const ListTile(
+            leading: Icon(Icons.verified_user, color: Color(0xFF1DB954)),
+            title: Text('100% Free & Ad-Free Guarantee'),
+            subtitle: Text('Unlimited streaming, no subscriptions, zero audio ads'),
           ),
-          ListTile(
-            leading: const Icon(Icons.info_outline, color: Color(0xFF1DB954)),
-            title: const Text('Version'),
-            subtitle: const Text('1.0.0 (Release Build)'),
+          const ListTile(
+            leading: Icon(Icons.info_outline, color: Color(0xFF1DB954)),
+            title: Text('Version'),
+            subtitle: Text('1.0.0 (Release Build)'),
           ),
         ],
       ),
