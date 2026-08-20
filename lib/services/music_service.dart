@@ -13,6 +13,7 @@ class MusicService {
 
   final YoutubeExplode _yt = YoutubeExplode();
   final Map<String, String> _streamCache = {};
+  static const String prodApiBase = 'https://auramusic-1-lqzx.onrender.com';
 
   // Curated Fallback Trending Tracks with high-res artwork
   static const List<Map<String, String>> defaultTrending = [
@@ -297,32 +298,33 @@ class MusicService {
     final cleanQuery = query.trim();
     final results = <Song>[];
 
-    // 1. On Web: Use same-origin real-time API
-    if (kIsWeb) {
-      try {
-        final res = await http.get(Uri.parse('/api/search?q=${Uri.encodeComponent(cleanQuery)}')).timeout(
-          const Duration(seconds: 5),
-        );
-        if (res.statusCode == 200) {
-          final data = json.decode(res.body);
-          final list = data['results'] as List<dynamic>? ?? [];
-          for (final item in list) {
-            results.add(Song(
-              id: item['id'] ?? '',
-              title: item['title'] ?? '',
-              artist: item['artist'] ?? '',
-              album: item['album'],
-              duration: Duration(seconds: item['duration'] ?? 210),
-              artworkUrl: item['artworkUrl'] ?? '',
-              audioUrl: item['audioUrl'],
-              source: 'jiosaavn',
-            ));
-          }
-          if (results.isNotEmpty) return results;
+    // 1. Live Production Backend API (Web & Android)
+    try {
+      final apiUrl = kIsWeb
+          ? '/api/search?q=${Uri.encodeComponent(cleanQuery)}'
+          : '$prodApiBase/api/search?q=${Uri.encodeComponent(cleanQuery)}';
+      final res = await http.get(Uri.parse(apiUrl)).timeout(
+        const Duration(seconds: 5),
+      );
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+        final list = data['results'] as List<dynamic>? ?? [];
+        for (final item in list) {
+          results.add(Song(
+            id: item['id'] ?? '',
+            title: item['title'] ?? '',
+            artist: item['artist'] ?? '',
+            album: item['album'],
+            duration: Duration(seconds: item['duration'] ?? 210),
+            artworkUrl: item['artworkUrl'] ?? '',
+            audioUrl: item['audioUrl'],
+            source: 'jiosaavn',
+          ));
         }
-      } catch (e) {
-        debugPrint('Web search API error: $e');
+        if (results.isNotEmpty) return results;
       }
+    } catch (e) {
+      debugPrint('Live backend search API error: $e');
     }
 
     // 2. Direct JioSaavn Search (Native & Fallback)
@@ -403,29 +405,30 @@ class MusicService {
 
   /// Get Trending / Top Charts in Real Time
   Future<List<Song>> getTrendingSongs() async {
-    // 1. On Web: Try live API first
-    if (kIsWeb) {
-      try {
-        final res = await http.get(Uri.parse('/api/trending')).timeout(const Duration(seconds: 4));
-        if (res.statusCode == 200) {
-          final data = json.decode(res.body);
-          final list = data['results'] as List<dynamic>? ?? [];
-          final songs = <Song>[];
-          for (final item in list) {
-            songs.add(Song(
-              id: item['id'] ?? '',
-              title: item['title'] ?? '',
-              artist: item['artist'] ?? '',
-              album: item['album'],
-              duration: Duration(seconds: item['duration'] ?? 210),
-              artworkUrl: item['artworkUrl'] ?? '',
-              audioUrl: item['audioUrl'],
-              source: 'jiosaavn',
-            ));
-          }
-          if (songs.isNotEmpty) return songs;
+    // 1. Live Production Backend API (Web & Android)
+    try {
+      final apiUrl = kIsWeb ? '/api/trending' : '$prodApiBase/api/trending';
+      final res = await http.get(Uri.parse(apiUrl)).timeout(const Duration(seconds: 5));
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+        final list = data['results'] as List<dynamic>? ?? [];
+        final songs = <Song>[];
+        for (final item in list) {
+          songs.add(Song(
+            id: item['id'] ?? '',
+            title: item['title'] ?? '',
+            artist: item['artist'] ?? '',
+            album: item['album'],
+            duration: Duration(seconds: item['duration'] ?? 210),
+            artworkUrl: item['artworkUrl'] ?? '',
+            audioUrl: item['audioUrl'],
+            source: 'jiosaavn',
+          ));
         }
-      } catch (_) {}
+        if (songs.isNotEmpty) return songs;
+      }
+    } catch (e) {
+      debugPrint('Trending API error: $e');
     }
 
     // 2. Real-time Search for Top Charts
