@@ -144,10 +144,15 @@ class AudioPlayerService {
 
       // Check if downloaded offline file exists
       if (!kIsWeb && song.isDownloaded && song.localFilePath != null && File(song.localFilePath!).existsSync()) {
-        audioSource = AudioSource.file(
-          song.localFilePath!,
-          tag: mediaItem,
-        );
+        try {
+          audioSource = AudioSource.file(
+            song.localFilePath!,
+            tag: mediaItem,
+          );
+          await _player.setAudioSource(audioSource);
+        } catch (_) {
+          await _player.setFilePath(song.localFilePath!);
+        }
       } else {
         // Resolve online 320 kbps / high-fidelity stream URL
         final streamUrl = await MusicService.instance.getAudioStreamUrl(
@@ -156,23 +161,27 @@ class AudioPlayerService {
         );
         debugPrint('Streaming audio URL: $streamUrl');
 
-        if (kIsWeb) {
-          audioSource = AudioSource.uri(Uri.parse(streamUrl));
-        } else {
+        try {
           audioSource = AudioSource.uri(
             Uri.parse(streamUrl),
+            headers: const {'User-Agent': 'Mozilla/5.0 (Linux; Android 10)'},
             tag: mediaItem,
+          );
+          await _player.setAudioSource(audioSource);
+        } catch (e) {
+          debugPrint('AudioSource tag fallback: $e');
+          await _player.setUrl(
+            streamUrl,
+            headers: const {'User-Agent': 'Mozilla/5.0 (Linux; Android 10)'},
           );
         }
       }
 
-      await _player.setAudioSource(audioSource);
       await _player.play();
     } catch (e) {
       debugPrint('Error playing audio stream: $e');
       _isBuffering = false;
       _bufferingController.add(false);
-      // If error occurs, try skipping to next song
       if (_queue.length > 1) {
         skipToNext();
       }
