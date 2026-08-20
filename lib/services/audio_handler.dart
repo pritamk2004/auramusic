@@ -74,7 +74,11 @@ class AudioPlayerService {
       _bufferingController.add(_isBuffering);
 
       if (state.processingState == ProcessingState.completed) {
-        _handleSongCompletion();
+        if (_position > const Duration(seconds: 2) &&
+            _duration > const Duration(seconds: 2) &&
+            _position >= _duration - const Duration(seconds: 3)) {
+          _handleSongCompletion();
+        }
       }
     });
 
@@ -132,59 +136,41 @@ class AudioPlayerService {
     StorageService.instance.addToHistory(song);
 
     try {
-      AudioSource audioSource;
-      final mediaItem = MediaItem(
-        id: song.id,
-        album: song.album ?? 'AuraMusic',
-        title: song.title,
-        artist: song.artist,
-        artUri: song.artworkUrl.isNotEmpty ? Uri.tryParse(song.artworkUrl) : null,
-        duration: song.duration,
-      );
-
-      // Check if downloaded offline file exists
       if (!kIsWeb && song.isDownloaded && song.localFilePath != null && File(song.localFilePath!).existsSync()) {
-        try {
-          audioSource = AudioSource.file(
-            song.localFilePath!,
-            tag: mediaItem,
-          );
-          await _player.setAudioSource(audioSource);
-        } catch (_) {
-          await _player.setFilePath(song.localFilePath!);
-        }
+        await _player.setFilePath(song.localFilePath!);
       } else {
-        // Resolve online 320 kbps / high-fidelity stream URL
-        final streamUrl = await MusicService.instance.getAudioStreamUrl(
-          song,
-          quality: StorageService.instance.streamingQuality,
-        );
-        debugPrint('Streaming audio URL: $streamUrl');
-
-        try {
-          audioSource = AudioSource.uri(
-            Uri.parse(streamUrl),
-            headers: const {'User-Agent': 'Mozilla/5.0 (Linux; Android 10)'},
-            tag: mediaItem,
-          );
-          await _player.setAudioSource(audioSource);
-        } catch (e) {
-          debugPrint('AudioSource tag fallback: $e');
-          await _player.setUrl(
-            streamUrl,
-            headers: const {'User-Agent': 'Mozilla/5.0 (Linux; Android 10)'},
+        String streamUrl = '';
+        if (song.audioUrl != null && song.audioUrl!.isNotEmpty) {
+          streamUrl = song.audioUrl!;
+        } else {
+          streamUrl = await MusicService.instance.getAudioStreamUrl(
+            song,
+            quality: StorageService.instance.streamingQuality,
           );
         }
+
+        if (streamUrl.isEmpty) {
+          throw Exception('Unable to obtain audio stream URL');
+        }
+
+        debugPrint('Playing stream URL: $streamUrl');
+
+        await _player.setUrl(
+          streamUrl,
+          headers: const {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': '*/*',
+          },
+        );
       }
 
       await _player.play();
+      _isBuffering = false;
+      _bufferingController.add(false);
     } catch (e) {
       debugPrint('Error playing audio stream: $e');
       _isBuffering = false;
       _bufferingController.add(false);
-      if (_queue.length > 1) {
-        skipToNext();
-      }
     }
   }
 
